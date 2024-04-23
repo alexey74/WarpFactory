@@ -30,7 +30,7 @@ if nargin < 4
 end
 
 % Check that tensor is a metric
-if strcmpi(metric.type, "metric")
+if ~strcmpi(metric.type, "metric")
     error("Must provide a metric object.");
 end
 
@@ -48,13 +48,13 @@ end
 sliceLocations = round(sliceLocations);
 
 % Check that the sliceLocations are inside the world
-if sliceLocations(1) < 1 || sliceLocations(2) < 1 || sliceLocations(1) > size(tensor.tensor, slicedPlanes(1)) || sliceLocations(2) > size(tensor.tensor, slicedPlanes(2))
+if sliceLocations(1) < 1 || sliceLocations(2) < 1 || sliceLocations(1) > size(metric.tensor{1,1}, slicedPlanes(1)) || sliceLocations(2) > size(metric.tensor{1,1}, slicedPlanes(2))
     error('sliceLocations are outside the world.')
 end
 
 % Check that the coords are cartesian
 if strcmpi(metric.coords, "cartesian")
-    [alpha_lapse, betaDown, gammaDown, ~, ~] = ThreePlusOneDecomposer(metric);
+    [alpha_lapse, betaDown, gammaDown, ~, ~] = threePlusOneDecomposer(metric);
 
     [xLabelText, yLabelText] = labelCartesianAxis(slicedPlanes);
     idx = getSliceData(slicedPlanes, sliceLocations, metric);
