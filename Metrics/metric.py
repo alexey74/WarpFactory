@@ -9,3 +9,4 @@ class Metric:
     index: str
     date: str
     params_p: float
+    params_rho_smooth: np.ndarray
