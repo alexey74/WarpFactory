@@ -15,7 +15,7 @@ import numpy as np
 from Metrics.metric import Metric
 
 
-def set_minkowski(grid_size: list) -> np.ndarray:
+def set_minkowski(grid_size: np.ndarray) -> np.ndarray:
     t_grid_size: tuple = tuple(grid_size)
 
     metric: np.ndarray = np.zeros((4, 4) + t_grid_size)

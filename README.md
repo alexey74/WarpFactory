@@ -1,3 +1,7 @@
+# List of Current Question Marks
+- shapeFunction_Alcubierre seems to be always 0
+- metricGet_ModifiedTime randomly uses a variable called 'GridScale' which is not given
+
 # WarpFactory
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

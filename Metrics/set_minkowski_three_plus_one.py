@@ -14,7 +14,7 @@ gamma - Spatial terms, 3x3 cell of 4D arrays.
 import numpy as np
 
 
-def set_minkowski_three_plus_one(grid_size: list[int]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def set_minkowski_three_plus_one(grid_size: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     t_grid_size: tuple = tuple(grid_size)
     alpha: np.ndarray = np.ones(t_grid_size)
 
