@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 
 
-def alphanumeric_solver(M, P, R, r):
+def alphanumeric_solver(M, P, r):
     # Trapezoidal Method:
     dalpha = ((sp.constants.G * M / sp.constants.c ** 2 + 4 * sp.constants.pi * sp.constants.G * r ** 3 * P / sp.constants.c ** 4)
               / (r ** 2 - 2 * sp.constants.G * M * r / sp.constants.c ** 2))

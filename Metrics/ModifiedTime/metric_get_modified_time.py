@@ -33,7 +33,7 @@ from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
 def metric_get_modified_time(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
                              big_a: np.double, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     # Assign parameters to metric struct
-    metric_val = Metric()
+    metric_val = Metric("Modified Time")
     metric_val.params_gridSize = grid_size
     metric_val.params_worldCenter = world_center
     metric_val.params_velocity = v
@@ -44,11 +44,10 @@ def metric_get_modified_time(grid_size: np.ndarray, world_center: np.ndarray, v:
     # Assign quantities to metric struct
     metric_val.type = "metric"
     metric_val.frame = "comoving"
-    metric_val.name = "Modified Time"
     metric_val.scaling = grid_scaling
     metric_val.coords = "cartesian"
     metric_val.index = "covariant"
-    metric_val.date = datetime.today().strftime('%d-%m-%Y')
+    metric_val.date = datetime.today().isoformat()
 
     # Set Minkowski terms
     metric_val.tensor = set_minkowski(grid_size)

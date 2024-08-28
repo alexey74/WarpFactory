@@ -27,7 +27,7 @@ def metric_get_schwarzschild(grid_size: np.ndarray, world_center: np.ndarray, rs
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
 
     # Assign parameters to metric struct
-    metric_val = Metric()
+    metric_val = Metric("Schwarzschild")
     metric_val.params_gridSize = grid_size
     metric_val.params_worldCenter = world_center
     metric_val.params_rs = rs
@@ -35,11 +35,10 @@ def metric_get_schwarzschild(grid_size: np.ndarray, world_center: np.ndarray, rs
     # Assign quantities to metric struct
     metric_val.type = "metric"
     metric_val.frame = "comoving"
-    metric_val.name = "Schwarzschild"
     metric_val.scaling = grid_scaling
     metric_val.coords = "cartesian"
     metric_val.index = "covariant"
-    metric_val.date = datetime.today().strftime('%d-%m-%Y')
+    metric_val.date = datetime.today().isoformat()
 
     # Set Minkowski terms
     metric_val.tensor = set_minkowski(grid_size)

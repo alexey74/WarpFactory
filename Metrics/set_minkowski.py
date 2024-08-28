@@ -12,8 +12,6 @@ tensor - The metric tensor as a 4x4 cell of 4D arrays.
 """
 import numpy as np
 
-from Metrics.metric import Metric
-
 
 def set_minkowski(grid_size: np.ndarray) -> np.ndarray:
     t_grid_size: tuple = tuple(grid_size)

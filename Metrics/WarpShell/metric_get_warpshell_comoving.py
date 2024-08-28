@@ -71,7 +71,7 @@ def metric_val_get_warpshell_comoving(grid_size: np.ndarray, world_center: np.ar
     big_b[1] = 1
 
     # solve for a
-    a = alphanumeric_solver(big_m, big_p, max_big_r, r_sample)
+    a = alphanumeric_solver(big_m, big_p, r_sample)
 
     # solve for A from a
     big_a = -np.exp(2 * a)

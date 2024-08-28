@@ -18,7 +18,7 @@ def set_minkowski_three_plus_one(grid_size: np.ndarray) -> tuple[np.ndarray, np.
     t_grid_size: tuple = tuple(grid_size)
     alpha: np.ndarray = np.ones(t_grid_size)
 
-    beta = np.zeros((1, 3) + t_grid_size)
+    beta = np.zeros((3,) + t_grid_size)
 
     gamma = np.zeros((3, 3) + t_grid_size)
 

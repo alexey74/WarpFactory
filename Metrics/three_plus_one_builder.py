@@ -1,14 +1,14 @@
 """
 THREEPLUSONEBUILDER: Builds the metric given input 3+1 components of alpha, beta, and gamma
 
-INPUTS:
-alpha - (TxXxYxZ) lapse rate map across spacetime
-beta - {3}x(TxXxYxZ) (covariant assumed) shift vector map across spacetime
-gamma - {3x3}x(TxXxYxZ) (covariant assumed) spatial term map across spacetime
+    INPUTS:
+    alpha - (TxXxYxZ) lapse rate map across spacetime
+    beta - {3}x(TxXxYxZ) (covariant assumed) shift vector map across spacetime
+    gamma - {3x3}x(TxXxYxZ) (covariant assumed) spatial term map across spacetime
 
 
-OUTPUTS:
-metricTensor - metric struct
+    OUTPUTS:
+    tensor - metric struct
 """
 import numpy as np
 
@@ -24,27 +24,27 @@ def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarra
     s = tuple(gamma.shape[2:])
 
     # Calculate beta_i
-    beta_up = np.zeros((1, 3) + s)
+    beta_up = np.zeros((3,) + s)
 
     for i in range(3):
         for j in range(3):
-            beta_up[0, i] = beta_up[0, i] + gamma_up[i, j] * beta[0, j]
+            beta_up[i] = beta_up[i] + gamma_up[i, j] * beta[j]
 
     # Create time-time component
-    metric_tensor: np.ndarray = np.zeros((4, 4) + s)
-    metric_tensor[0, 0] = -alpha**2
+    tensor: np.ndarray = np.zeros((4, 4) + s)
+    tensor[0, 0] = -alpha**2
 
     for i in range(3):
-        metric_tensor[0, 0] = metric_tensor[0, 0] + beta_up[0, i] * beta[0, i]
+        tensor[0, 0] = tensor[0, 0] + beta_up[i] * beta[i]
 
     # Create time-space components
     for i in range(1, 4):
-        metric_tensor[0, i] = beta[0, i-1]
-        metric_tensor[i, 0] = metric_tensor[1, i]
+        tensor[0, i] = beta[i-1]
+        tensor[i, 0] = tensor[1, i]
 
     # Create space-space components
     for i in range(1, 4):
         for j in range(1, 4):
-            metric_tensor[i, j] = gamma[i-1, j-1]
+            tensor[i, j] = gamma[i-1, j-1]
 
-    return metric_tensor
+    return tensor
