@@ -12,13 +12,12 @@ THREEPLUSONEBUILDER: Builds the metric given input 3+1 components of alpha, beta
 """
 import numpy as np
 
+from Solver.utils.c3_inv import c3_inv
+
 
 def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarray) -> np.ndarray:
-
     # Set spatial components
-    h_gamma, w_gamma = gamma.shape[:2]
-    assert h_gamma == 3 and w_gamma == 3, 'Cell array is not 3x3'
-    gamma_up = np.linalg.inv(gamma)
+    gamma_up = c3_inv(gamma)
 
     # Find gridSize
     s = tuple(gamma.shape[2:])

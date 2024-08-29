@@ -1,5 +1,4 @@
 # List of Current Question Marks
-- shapeFunction_Alcubierre seems to be always 0
 - metricGet_ModifiedTime randomly uses a variable called 'GridScale' which is not given
 
 # WarpFactory
