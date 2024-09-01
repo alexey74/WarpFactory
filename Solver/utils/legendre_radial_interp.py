@@ -5,15 +5,16 @@ def legendre_radial_interp(input_array, r):
     # 3rd Order Legendre Polynomial Interpolation
     r_scale = 1
 
-    x0 = np.floor(r / r_scale - 1)
-    x1 = np.floor(r / r_scale)
-    x2 = np.ceil(r / r_scale)
-    x3 = np.ceil(r / r_scale + 1)
+    x0 = np.int32(np.max(np.floor(r / r_scale - 1)))
+    x1 = np.int32(np.max(np.floor(r / r_scale)))
+    x2 = np.int32(np.max(np.ceil(r / r_scale)))
+    x3 = np.int32(np.max(np.ceil(r / r_scale + 1)))
 
-    y0 = input_array[max(x0, 1)]
-    y1 = input_array[max(x1, 1)]
-    y2 = input_array[max(x2, 1)]
-    y3 = input_array[max(x3, 1)]
+
+    y0 = input_array[x0]
+    y1 = input_array[x1]
+    y2 = input_array[x2]
+    y3 = input_array[x3]
 
     x0 *= r_scale
     x1 *= r_scale

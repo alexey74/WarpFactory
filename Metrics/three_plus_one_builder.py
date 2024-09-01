@@ -20,7 +20,7 @@ def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarra
     gamma_up = c3_inv(gamma)
 
     # Find gridSize
-    s = tuple(gamma.shape[2:])
+    s = gamma.shape[2:]
 
     # Calculate beta_i
     beta_up = np.zeros((3,) + s)

@@ -19,8 +19,7 @@ from Solver.utils.c3_inv import c3_inv
 
 def three_plus_one_decomposer(metric_val) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # Check that the metric is covariant and change index if not
-    # Yeah, needs implementing
-    # metric_val = change_tensor_index(metric_val, "covariant")
+    metric_val = change_tensor_index(metric_val, "covariant")
 
     # Covariant shift vector maps to the covariant tensor terms g_0i
     beta_down: np.ndarray = np.array([[metric_val.tensor[0, 1], metric_val.tensor[1, 2], metric_val.tensor[2, 3]]])
@@ -33,11 +32,8 @@ def three_plus_one_decomposer(metric_val) -> tuple[np.ndarray, np.ndarray, np.nd
     # Set spatial components
     gamma_up: np.ndarray = c3_inv(gamma_down)
 
-    # Find gridSize
-    s: tuple = tuple(metric_val.tensor[0, 0].shape)
-
     # Transform beta to contravariant
-    beta_up: np.ndarray = np.zeros((1, 3) + s)
+    beta_up: np.ndarray = np.zeros((1, 3) + metric_val.tensor[0, 0].shape)
 
     for i in range(3):
         for j in range(3):
