@@ -23,13 +23,11 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics.metric import Metric
-from Metrics.set_minkowski import set_minkowski
-from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
+from Metrics import Metric, set_minkowski, shape_func_alcubierre
 
 
 # Handle default input arguments
-def metric_get_modified_time_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
+def modified_time_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
                              big_a: np.double, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used in comoving'
 

@@ -24,13 +24,11 @@ from datetime import datetime
 import numpy as np
 import scipy as sp
 
-from Metrics.metric import Metric
-from Metrics.set_minkowski import set_minkowski
-from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
+from Metrics import Metric, set_minkowski, shape_func_alcubierre
 
 
 # Handle default input arguments
-def metric_get_modified_time(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
+def modified_time(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
                              big_a: np.double, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     # Assign parameters to metric struct
     metric_val = Metric("Modified Time")

@@ -34,14 +34,12 @@ from datetime import datetime
 import scipy as sp
 import scipy.constants
 import numpy as np
-from Metrics.metric import Metric
-from Metrics.utils.alphanumeric_solver import alphanumeric_solver
-from Metrics.utils.compact_sigmoid import compact_sigmoid
-from Metrics.utils.sph2cart_diag import sph2cart_diag
-from Metrics.utils.tov_const_density import tov_const_density
-from Solver.utils.legendre_radial_interp import legendre_radial_interp
 
-def metric_val_get_warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.float64, R1: np.float64,
+from Metrics import Metric, tov_const_density, compact_sigmoid, alphanumeric_solver, sph2cart_diag
+from Solver import legendre_radial_interp
+
+
+def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.float64, R1: np.float64,
                                       R2: np.float64, r_buff: np.float64 = 0.0, sigma: np.float64 = 0.0,
                                       smooth_factor: np.float64 = 1.0, v_warp: np.float64 = 0.0, do_warp: bool = False,
                                       grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def c_det(tensor):
+def c_det(tensor: np.ndarray) -> np.float64:
     det: np.float64 = np.float64(0.0)
 
     h, w = tensor.shape[:2]

@@ -22,13 +22,13 @@ from datetime import datetime
 import numpy as np
 import scipy as sp
 
-from Metrics.metric import Metric
-from Metrics.set_minkowski_three_plus_one import set_minkowski_three_plus_one
-from Metrics.three_plus_one_builder import three_plus_one_builder
+from Metrics.utils.metric import Metric
+from Metrics.utils.set_minkowski_three_plus_one import set_minkowski_three_plus_one
+from Metrics.utils.three_plus_one_builder import three_plus_one_builder
 from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
 
 
-def metric_get_alcubierre(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64 = None,
+def alcubierre(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64 = None,
                      sigma: np.float64 = None, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     # Assign parameters to metric struct
     metric_val = Metric("Alcubierre")

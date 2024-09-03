@@ -1,6 +1,6 @@
 import numpy as np
 
-from Metrics.metric import Metric
+from Metrics.utils.metric import Metric
 
 
 def flip_index(input_tensor: Metric, metric_tensor: Metric):

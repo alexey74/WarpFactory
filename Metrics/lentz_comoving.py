@@ -1,5 +1,5 @@
 """
-METRICGET_ALCUBIERRECOMOVING: Builds the Alcubierre metric in a Galilean comoving frame
+METRICGET_LENTZ: Builds the Lentz metric
 
     INPUTS:
     gridSize - 1x4 array. world size in [t, x, y, z], double type.
@@ -8,9 +8,7 @@ METRICGET_ALCUBIERRECOMOVING: Builds the Alcubierre metric in a Galilean comovin
 
     v - speed of the warp drive in factors of c, along the x direction, double type.
 
-    R - radius of the warp bubble, double type.
-
-    sigma - thickness parameter of the bubble, double type.
+    scale - the sizing factor of the Lentz soliton template
 
     gridScale - scaling of the grid in [t, x, y, z]. double type.
 
@@ -21,24 +19,26 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics import metric
-from Metrics.metric import Metric
-from Metrics.set_minkowski_three_plus_one import set_minkowski_three_plus_one
-from Metrics.three_plus_one_builder import three_plus_one_builder
-from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
+from Metrics.utils import metric
+from Metrics.utils.metric import Metric
+from Metrics.utils.set_minkowski_three_plus_one import set_minkowski_three_plus_one
+from Metrics.utils.three_plus_one_builder import three_plus_one_builder
+from Metrics.utils.warp_factor_by_region import get_warp_factor_by_region
 
 
-def metric_get_alcubierre_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64 = None,
-                     sigma: np.float64 = None, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
+def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale: np.float64 = None,
+                  grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
 
+    # Handle default input argument
+    if scale is None:
+        scale = max(grid_size[1:3]) / 7
+
     # Assign parameters to metric struct
-    metric_val = Metric("Alcubierre Comoving")
+    metric_val = Metric("Lentz Comoving")
     metric_val.params_grid_size = grid_size
     metric_val.params_world_center = world_center
     metric_val.params_velocity = v
-    metric_val.params_big_r = big_r
-    metric_val.params_sigma = sigma
 
     # Assign quantities to metric struct
     metric_val.type = "metric"
@@ -52,25 +52,23 @@ def metric_get_alcubierre_comoving(grid_size: np.ndarray, world_center: np.ndarr
 
     t = 0  # only one timeslice is used
 
-    # Add the Alcubierre modification
+    # Lentz Soliton Terms
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
 
-                # Find grid center x, y, z
                 x = i * grid_scaling[1] - world_center[1]
                 y = j * grid_scaling[2] - world_center[2]
-                z = k * grid_scaling[3] - world_center[3]
-                # Find the radius from the center of the bubble
-                r = np.sqrt(x**2 + y**2 + z**2)
 
-                # Find shape function at this point in r
-                fs = shape_func_alcubierre(r, big_r, sigma)
+                # Get Lentz template values
+                wfx, wfy = get_warp_factor_by_region(x, y, scale)
 
-                # Add alcubierre modification to shift vector along x
-                beta[(0,) + (t, i, j, k)] = v * (1 - fs)
+                # Assign dxdt term
+                beta[(0,) + (t, i, j, k)] = v * (1 - wfx)
 
-    # Create tensor from the 3+1 functions
+                # Assign dydt term
+                beta[(1,) + (t, i, j, k)] = wfy * v
+
     metric_val.tensor = three_plus_one_builder(alpha, beta, gamma)
 
     return metric

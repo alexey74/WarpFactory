@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_warp_factor_by_region(x: np.float64, y_in: np.float64, size_scale) -> tuple[float, float]:
+def warp_factor_by_region(x: np.float64, y_in: np.float64, size_scale) -> tuple[float, float]:
     y = np.abs(y_in)
     wfx: float = 0
     wfy: float = 0

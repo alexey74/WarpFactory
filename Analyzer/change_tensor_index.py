@@ -18,7 +18,7 @@ import numpy as np
 from Analyzer.utils.flip_index import flip_index
 from Analyzer.utils.mix_index1 import mix_index1
 from Analyzer.utils.mix_index2 import mix_index2
-from Metrics.metric import Metric
+from Metrics.utils.metric import Metric
 
 
 def change_tensor_index(input_tensor: Metric, index, metric_tensor: Metric = None):

@@ -27,12 +27,10 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics.metric import Metric
-from Metrics.set_minkowski import set_minkowski
-from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
+from Metrics import Metric, set_minkowski, shape_func_alcubierre
 
 
-def metric_get_van_den_broeck_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r_1: np.float64,
+def van_den_broeck_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r_1: np.float64,
                               sigma_1: np.float64, big_r_2: np.float64, sigma_2: np.float64, big_a: np.float64,
                               grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'

@@ -13,10 +13,10 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics.metric import Metric
+from Metrics.utils.metric import Metric
 
 
-def metric_get_minkowski(grid_size: np.ndarray, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
+def minkowski(grid_size: np.ndarray, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     t_grid_size: tuple = tuple(grid_size)
 
     # Assign quantities to metric struct

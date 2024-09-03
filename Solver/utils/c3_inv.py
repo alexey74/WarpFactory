@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def c3_inv(tensor):
+def c3_inv(tensor: np.ndarray) -> np.ndarray:
     h, w = tensor.shape[:2]
     assert h == 3 and w == 3, 'Tensor is not 3x3'
 

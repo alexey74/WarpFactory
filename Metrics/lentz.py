@@ -18,24 +18,19 @@ METRICGET_LENTZ: Builds the Lentz metric
 from datetime import datetime
 
 import numpy as np
+import scipy as sp
 
-from Metrics import metric
-from Metrics.metric import Metric
-from Metrics.set_minkowski_three_plus_one import set_minkowski_three_plus_one
-from Metrics.three_plus_one_builder import three_plus_one_builder
-from Metrics.utils.get_warp_factor_by_region import get_warp_factor_by_region
+from Metrics import Metric, set_minkowski_three_plus_one, warp_factor_by_region, three_plus_one_builder
 
 
-def metric_get_lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale: np.float64 = None,
+def lentz(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale: np.float64 = None,
                   grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
-    assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
-
     # Handle default input argument
     if scale is None:
-        scale = max(grid_size[1:3]) / 7
+        scale = max(grid_size[1:3])/7
 
     # Assign parameters to metric struct
-    metric_val = Metric("Lentz Comoving")
+    metric_val = Metric("Lentz")
     metric_val.params_grid_size = grid_size
     metric_val.params_world_center = world_center
     metric_val.params_velocity = v
@@ -50,8 +45,6 @@ def metric_get_lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v
     # Declare a Minkowski space
     alpha, beta, gamma = set_minkowski_three_plus_one(grid_size)
 
-    t = 0  # only one timeslice is used
-
     # Lentz Soliton Terms
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
@@ -60,15 +53,21 @@ def metric_get_lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v
                 x = i * grid_scaling[1] - world_center[1]
                 y = j * grid_scaling[2] - world_center[2]
 
-                # Get Lentz template values
-                wfx, wfy = get_warp_factor_by_region(x, y, scale)
+                for t in range(grid_size[0]):
+                    # Determine the x offset of the center of the bubble, centered in time
+                    xs = (t * grid_scaling[0] - world_center[0]) * v * sp.constants.c
 
-                # Assign dxdt term
-                beta[(0,) + (t, i, j, k)] = v * (1 - wfx)
+                    xp = x - xs
 
-                # Assign dydt term
-                beta[(1,) + (t, i, j, k)] = wfy * v
+                    # Get Lentz template values
+                    wfx, wfy = warp_factor_by_region(xp, y, scale)
+
+                    # Assign dxdt term
+                    beta[(0,) + (t, i, j, k)] = -wfx * v
+
+                    # Assign dydt term
+                    beta[(1,) + (t, i, j, k)] = wfy * v
 
     metric_val.tensor = three_plus_one_builder(alpha, beta, gamma)
 
-    return metric
+    return metric_val

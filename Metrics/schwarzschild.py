@@ -17,12 +17,11 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics.metric import Metric
-from Metrics.set_minkowski import set_minkowski
+from Metrics import Metric, set_minkowski
 
 
 # Handle default input arguments
-def metric_get_schwarzschild(grid_size: np.ndarray, world_center: np.ndarray, rs: np.float64,
+def schwarzschild(grid_size: np.ndarray, world_center: np.ndarray, rs: np.float64,
                              grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
 
