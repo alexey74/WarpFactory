@@ -1,0 +1,12 @@
+import numpy
+from Cython.Build import cythonize
+from setuptools import setup
+
+setup(
+    name='WarpFactory',
+    packages=['Solver', 'Solver.utils', 'Metrics', 'Metrics.utils', 'Analyzer', 'Analyzer.utils'],
+    author='Lina',
+    ext_modules=cythonize(['.\\Metrics\\utils\\sph2cart_diag.pyx', '.\\Metrics\\utils\\alphanumeric_solver.pyx',
+                           '.\\Solver\\utils\\legendre_radial_interp.pyx'], compiler_directives={"language_level": "3"}),
+    include_dirs=[numpy.get_include()]
+)

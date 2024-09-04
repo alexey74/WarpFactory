@@ -12,4 +12,4 @@ OUTPUTS:
 energy - energy tensor struct
 """
 def get_energy_tensor(metric, try_gpu: bool = False, diff_order: str = 'fourth'):
-
+    print('lol')

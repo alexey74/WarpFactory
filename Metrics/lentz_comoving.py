@@ -19,11 +19,7 @@ from datetime import datetime
 
 import numpy as np
 
-from Metrics.utils import metric
-from Metrics.utils.metric import Metric
-from Metrics.utils.set_minkowski_three_plus_one import set_minkowski_three_plus_one
-from Metrics.utils.three_plus_one_builder import three_plus_one_builder
-from Metrics.utils.warp_factor_by_region import get_warp_factor_by_region
+from Metrics import Metric, set_minkowski_three_plus_one, warp_factor_by_region, three_plus_one_builder
 
 
 def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale: np.float64 = None,
@@ -61,7 +57,7 @@ def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float6
                 y = j * grid_scaling[2] - world_center[2]
 
                 # Get Lentz template values
-                wfx, wfy = get_warp_factor_by_region(x, y, scale)
+                wfx, wfy = warp_factor_by_region(x, y, scale)
 
                 # Assign dxdt term
                 beta[(0,) + (t, i, j, k)] = v * (1 - wfx)
@@ -71,4 +67,4 @@ def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float6
 
     metric_val.tensor = three_plus_one_builder(alpha, beta, gamma)
 
-    return metric
+    return metric_val
