@@ -2,6 +2,8 @@ from Metrics.utils.metric import Metric  # NOQA
 
 from Metrics.utils.alphanumeric_solver import alphanumeric_solver  # NOQA
 
+from Metrics.utils.find_min_idx import find_min_idx  # NOQA
+
 from Metrics.utils.compact_sigmoid import compact_sigmoid  # NOQA
 
 from Metrics.utils.cumulative_trapezoid_gpu import cumulative_trapezoid_gpu  # NOQA
@@ -42,4 +44,4 @@ from Metrics.van_den_broeck import van_den_broeck  # NOQA
 
 from Metrics.van_den_broeck_comoving import van_den_broeck_comoving  # NOQA
 
-# from Metrics.warpshell_comoving import warpshell_comoving  # NOQA
+from Metrics.warpshell_comoving import warpshell_comoving  # NOQA

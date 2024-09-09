@@ -37,19 +37,16 @@ import scipy as sp
 import scipy.constants
 import numpy as np
 
-from Metrics import Metric, tov_const_density, compact_sigmoid, alphanumeric_solver, sph2cart_diag
-from Metrics.utils.alphanumeric_solver_py import alphanumeric_solver_py
-from Solver import legendre_radial_interp
+from Metrics import Metric, tov_const_density, compact_sigmoid, sph2cart_diag, find_min_idx
 
-P_Time: list[int] = []
+from Metrics.utils.alphanumeric_solver import alphanumeric_solver
+from Solver import legendre_radial_interp
 
 
 def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.float64, R1: np.float64,
                                       R2: np.float64, r_buff: np.float64 = 0.0, sigma: np.float64 = 0.0,
                                       smooth_factor: np.float64 = 1.0, v_warp: np.float64 = 0.0, do_warp: bool = False,
                                       grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
-
-    P_Time.append(time.process_time_ns())  # 0
 
     metric_val: Metric = Metric("Comoving Warp Shell")
     metric_val.type = "metric_val"
@@ -98,7 +95,7 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
     # set shift line vector
     shift_radial_vector = compact_sigmoid(r_sample, R1, R2, sigma, r_buff)
     shift_radial_vector = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(shift_radial_vector, wsz), wsz)
-    shift_radial_vector = [np.abs(i) for i in shift_radial_vector]
+    shift_radial_vector = np.array([np.abs(i) for i in shift_radial_vector])
 
     # construct metric_val using spherical symmetric_val solution:
     # solve for B
@@ -106,7 +103,7 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
     big_b[0] = 1
 
     # solve for a
-    a = alphanumeric_solver_py(big_m, big_p, r_sample)
+    a: np.ndarray[np.float64] = alphanumeric_solver(big_m, big_p, r_sample)
 
     # solve for A from a
     big_a = -np.exp(2 * a)
@@ -123,7 +120,7 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
     # set offset value to handle r = 0
     epsilon = np.float64(0.0)
 
-    P_Time.append(time.process_time_ns())  # 1
+    st = time.process_time_ns()
 
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
@@ -137,7 +134,7 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
                 theta = np.arctan2(np.sqrt(x**2 + y**2), z)
                 phi = np.arctan2(y, x)
 
-                min_idx = np.where(np.abs(r_sample - r) == np.min(np.abs(r_sample - r)))[0][0]
+                min_idx = find_min_idx(r_sample, r)
                 if r_sample[min_idx] > r:
                     min_idx = min_idx - 1
 
@@ -153,35 +150,27 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
                 metric_val.tensor[(1, 1, 0, i, j, k)] = g22_cart
 
                 metric_val.tensor[(1, 2, 0, i, j, k)] = g23_cart
-                metric_val.tensor[(2, 1, 0, i, j, k)] = metric_val.tensor[(1, 2, 0, i, j, k)]
+                metric_val.tensor[(2, 1, 0, i, j, k)] = g23_cart
 
                 metric_val.tensor[(1, 3, 0, i, j, k)] = g24_cart
-                metric_val.tensor[(3, 1, 0, i, j, k)] = metric_val.tensor[(1, 3, 0, i, j, k)]
+                metric_val.tensor[(3, 1, 0, i, j, k)] = g24_cart
 
                 metric_val.tensor[(2, 2, 0, i, j, k)] = g33_cart
 
                 metric_val.tensor[(2, 3, 0, i, j, k)] = g34_cart
-                metric_val.tensor[(3, 2, 0, i, j, k)] = metric_val.tensor[(2, 3, 0, i, j, k)]
+                metric_val.tensor[(3, 2, 0, i, j, k)] = g34_cart
 
                 metric_val.tensor[(3, 3, 0, i, j, k)] = g44_cart
 
                 shift_matrix[0, i, j, k] = legendre_radial_interp(shift_radial_vector, min_idx)
 
-    P_Time.append(time.process_time_ns())  # 15
+    et = time.process_time_ns()
+
+    print('Cython', (et - st) / 10 ** 9)
 
     # Add warp effect
     if do_warp:
         metric_val.tensor[(0, 1)] = metric_val.tensor[(0, 1)] - metric_val.tensor[(0, 1)] * shift_matrix - shift_matrix * v_warp
         metric_val.tensor[(1, 0)] = metric_val.tensor[(0, 1)]
-
-    P_Time.append(time.process_time_ns())  # 16
-
-    c = len(P_Time)
-
-    for i, ele in enumerate(P_Time):
-        if i < c - 1:
-            print(i + 1, (P_Time[i + 1] - P_Time[i]) * 10 ** (-9))
-        else:
-            print('Gesamt', (P_Time[i] - P_Time[0]) * 10 ** (-9))
 
     return metric_val

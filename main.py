@@ -4,12 +4,11 @@ import time
 import numpy as np
 import scipy as sp
 
-from Metrics import Metric, sph2cart_diag, alphanumeric_solver
-from Metrics.utils.alphanumeric_solver_py import alphanumeric_solver_py
+from Metrics import Metric, sph2cart_diag
 from Metrics.warpshell_comoving import warpshell_comoving
-from Solver import legendre_radial_interp
+from Solver import c_det
 
-# metric_val: Metric = warpshell_comoving(np.array([1, 300, 300, 5]), np.array([1.000692285594456e-11, 30.1, 30.1, 0.6]), np.float64(20/(2*sp.constants.G)*sp.constants.c**2*1/3), np.float64(10), np.float64(20), smooth_factor=np.float64(4000), v_warp=np.float64(0.02), do_warp=True, grid_scaling=np.array([3.335640951981520e-12, 0.2, 0.2, 0.2]))
+metric_val: Metric = warpshell_comoving(np.array([1, 300, 300, 5]), np.array([1.000692285594456e-11, 30.1, 30.1, 0.6]), np.float64(20/(2*sp.constants.G)*sp.constants.c**2*1/3), np.float64(10), np.float64(20), smooth_factor=np.float64(4000), v_warp=np.float64(0.02), do_warp=True, grid_scaling=np.array([3.335640951981520e-12, 0.2, 0.2, 0.2]))
 # print(metric_val)
 # metric_val: Metric = metric_get_van_den_broeck_comoving(np.array([1, 20, 20, 20]), np.array([1, 10.5, 10.5, 10.5]), np.float64(0.1), np.float64(2), np.float64(1), np.float64(5), np.float64(1), np.float64(0.5))
 # print(metric_val)
@@ -49,3 +48,11 @@ from Solver import legendre_radial_interp
 #et = time.process_time_ns()
 
 #print('Python', (et - st) / 10 ** 9)
+
+# arr = np.random.choice(np.arange(0, 100000.0, dtype=np.float64), size=(4, 4, 2, 5, 5, 10), replace=False)
+# arr = np.random.choice(np.arange(0, 100000.0, dtype=np.float64), size=(4, 4, 2, 2, 2, 2), replace=False)
+
+# print(c_det(arr))
+# print(np.linalg.det(arr))
+
+# print(arr)
