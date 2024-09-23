@@ -92,8 +92,8 @@ def take_finite_diff_2dirs(tensor: np.ndarray[np.float64], k1: int, k2: int,
                 big_b[:, :, :, -1] = big_b[:, :, :, -3]
     else:
         # Todo: Test this part too
-        k_l: np.int64 = np.max([k1, k2])
-        k_s: np.int64 = np.min([k1, k2])
+        k_l: int = max(k1, k2)
+        k_s: int = min(k1, k2)
 
         x0: range = range(3, size[k_s] - 1)
         x1: range = range(4, size[k_s])

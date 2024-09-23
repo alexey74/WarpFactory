@@ -36,7 +36,7 @@ cpdef np.ndarray[double] cumulative_trapz(np.ndarray[double] y, np.ndarray x=Non
     slice1[axis] = slice(1, None)
     slice2[axis] = slice(None, -1)
 
-    ret = np.cumulative_sum(d * (y[tuple(slice1)] + y[tuple(slice2)]) / 2.0, axis=axis)
+    ret = np.cumsum(d * (y[tuple(slice1)] + y[tuple(slice2)]) / 2.0, axis=axis)
 
     shape = np.shape(ret)
     PyTuple_SetItem(shape, PyTuple_Size(shape) - 1, 1)

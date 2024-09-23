@@ -43,12 +43,10 @@ from Metrics.warpshell_comoving import warpshell_comoving
 # metric_val: Metric = alcubierre(np.array([5, 20, 20, 20]), np.array([3, 10.5, 10.5, 10.5]), np.float64(0.5), np.float64(5), np.float64(0.5))
 # print(metric_val)
 metric_val: Metric = van_den_broeck(np.array([5, 20, 20, 20]), np.array([3, 10.5, 10.5, 10.5]), np.float64(0.1), np.float64(2), np.float64(1), np.float64(5), np.float64(1), np.float64(0.5))
-f_t = mat73.loadmat('array.mat')
-data_t = np.array(f_t['n_tensor'], dtype=np.float64)
 #e_tensor: np.ndarray[np.float64] = get_energy_tensor(metric_val).tensor
 
-#e_tensor: np.ndarray[np.float64] = ricci_tensor(data_t, tensor_inverse(data_t), np.array([1.0, 1.0, 1.0, 1.0]))
-e_tensor: np.ndarray[np.float64] = take_finite_diff_2dirs(data_t[3, 3], 0, 1, np.array([1.0, 1.0, 1.0, 1.0]), False)
+e_tensor: np.ndarray[np.float64] = ricci_tensor(metric_val.tensor, tensor_inverse(metric_val.tensor), np.array([1.0, 1.0, 1.0, 1.0]))
+#e_tensor: np.ndarray[np.float64] = take_finite_diff_2dirs(data_t[3, 3], 0, 1, np.array([1.0, 1.0, 1.0, 1.0]), False)
 
 f = mat73.loadmat('C:\\Users\\Lina\\Documents\\MATLAB\\array.mat')
 data = np.array(f['n_tensor'], dtype=np.float64)
