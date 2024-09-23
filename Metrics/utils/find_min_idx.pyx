@@ -1,12 +1,13 @@
 cimport cython
 
+
 cdef extern from "math.h":
-    double fabs(double x)
+    double fabs(double x) nogil
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef int find_min_idx(double[::1] r_sample, double r):
+cpdef int find_min_idx(double[::1] r_sample, double r) nogil:
     cdef int min_idx = 0
     cdef double min_val = 2147483647
     cdef double cur_val

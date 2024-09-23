@@ -62,32 +62,33 @@ def van_den_broeck(grid_size: np.ndarray, world_center: np.ndarray, v: np.float6
             for k in range(grid_size[3]):
 
                 # Find grid center x, y, z
-                x = i * grid_scaling[1] - world_center[1]
-                y = j * grid_scaling[2] - world_center[2]
-                z = k * grid_scaling[3] - world_center[3]
+                x: np.float64 = (1 + i) * grid_scaling[1] - world_center[1]
+                y: np.float64 = (1 + j) * grid_scaling[2] - world_center[2]
+                z: np.float64 = (1 + k) * grid_scaling[3] - world_center[3]
 
                 for t in range(grid_size[0]):
                     # Determine the x offset of the center of the bubble, centered in time
-                    xs = (t * grid_scaling[0] - world_center[0]) * v * (1 + big_a)**2 * sp.constants.c
+                    xs: np.float64 = ((1 + t) * grid_scaling[0] - world_center[0]) * v * (1 + big_a)**2 * sp.constants.c
 
                     # Find the radius from the center of the bubble
-                    r = np.sqrt((x - xs)**2 + y**2 + z**2)
+                    r: np.float64 = np.sqrt((x - xs)**2 + y**2 + z**2)
 
                     # Define the B function value in Van Den Broeck
-                    B = 1 + shape_func_alcubierre(r, big_r_1, sigma_1) * big_a
+                    big_b: np.float64 = 1 + shape_func_alcubierre(r, big_r_1, sigma_1) * big_a
 
                     # Define the f function value in Van Den Broeck
-                    fs = shape_func_alcubierre(r, big_r_2, sigma_2) * v
+                    fs: np.float64 = shape_func_alcubierre(r, big_r_2, sigma_2) * v
 
                     # Assign fs and B to the proper terms
-                    metric_val.tensor[(1, 1) + (t, i, j, k)] = B**2
-                    metric_val.tensor[(2, 2) + (t, i, j, k)] = B**2
-                    metric_val.tensor[(3, 3) + (t, i, j, k)] = B**2
+                    eq_terms: np.float64 = big_b ** 2
+                    metric_val.tensor[(1, 1) + (t, i, j, k)] = eq_terms
+                    metric_val.tensor[(2, 2) + (t, i, j, k)] = eq_terms
+                    metric_val.tensor[(3, 3) + (t, i, j, k)] = eq_terms
 
-                    cross_term = -B**2 * fs
+                    cross_term: np.float64 = -big_b**2 * fs
                     metric_val.tensor[(0, 1) + (t, i, j, k)] = cross_term
                     metric_val.tensor[(1, 0) + (t, i, j, k)] = cross_term
 
-                    metric_val.tensor[(0, 0) + (t, i, j, k)] = -(1 - B**2 * fs**2)
+                    metric_val.tensor[(0, 0) + (t, i, j, k)] = -(1 - big_b**2 * fs**2)
 
     return metric_val

@@ -50,17 +50,15 @@ def lentz(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale:
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
 
-                x = i * grid_scaling[1] - world_center[1]
-                y = j * grid_scaling[2] - world_center[2]
+                x = (1 + i) * grid_scaling[1] - world_center[1]
+                y = (1 + j) * grid_scaling[2] - world_center[2]
 
                 for t in range(grid_size[0]):
                     # Determine the x offset of the center of the bubble, centered in time
-                    xs = (t * grid_scaling[0] - world_center[0]) * v * sp.constants.c
-
-                    xp = x - xs
+                    xs = ((1 + t) * grid_scaling[0] - world_center[0]) * v * sp.constants.c
 
                     # Get Lentz template values
-                    wfx, wfy = warp_factor_by_region(xp, y, scale)
+                    wfx, wfy = warp_factor_by_region(x - xs, y, scale)
 
                     # Assign dxdt term
                     beta[(0,) + (t, i, j, k)] = -wfx * v

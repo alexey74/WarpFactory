@@ -24,8 +24,8 @@ import numpy as np
 from Metrics import Metric, set_minkowski_three_plus_one, shape_func_alcubierre, three_plus_one_builder
 
 
-def alcubierre_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64 = None,
-                     sigma: np.float64 = None, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
+def alcubierre_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64,
+                     sigma: np.float64, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
 
     # Assign parameters to metric struct
@@ -54,14 +54,14 @@ def alcubierre_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.f
             for k in range(grid_size[3]):
 
                 # Find grid center x, y, z
-                x = i * grid_scaling[1] - world_center[1]
-                y = j * grid_scaling[2] - world_center[2]
-                z = k * grid_scaling[3] - world_center[3]
+                x: np.float64 = (1 + i) * grid_scaling[1] - world_center[1]
+                y: np.float64 = (1 + j) * grid_scaling[2] - world_center[2]
+                z: np.float64 = (1 + k) * grid_scaling[3] - world_center[3]
                 # Find the radius from the center of the bubble
-                r = np.sqrt(x**2 + y**2 + z**2)
+                r: np.float64 = np.sqrt(x**2 + y**2 + z**2)
 
                 # Find shape function at this point in r
-                fs = shape_func_alcubierre(r, big_r, sigma)
+                fs: np.float64 = shape_func_alcubierre(r, big_r, sigma)
 
                 # Add alcubierre modification to shift vector along x
                 beta[(0,) + (t, i, j, k)] = v * (1 - fs)

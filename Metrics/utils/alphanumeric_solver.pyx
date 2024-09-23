@@ -1,3 +1,4 @@
+# TODO: Actually cythonize this
 import numpy as np
 import scipy as sp
 
@@ -12,7 +13,7 @@ cdef extern from "math.h":
 
 @cython.boundscheck(False)
 @cython.wraparound(True)
-cdef np.ndarray[double] cumulative_trapz(np.ndarray[double] y, np.ndarray x=None, double dx=1.0, int axis=-1, np.int initial=None):
+cpdef np.ndarray[double] cumulative_trapz(np.ndarray[double] y, np.ndarray x=None, double dx=1.0, int axis=-1, np.int initial=None):
     cdef np.ndarray[double] d
     cdef tuple shape
     cdef int x_nd = x.ndim
@@ -49,8 +50,11 @@ cdef np.ndarray[double] cumulative_trapz(np.ndarray[double] y, np.ndarray x=None
 @cython.boundscheck(False)
 @cython.wraparound(True)
 cpdef np.ndarray[double] alphanumeric_solver(np.ndarray[double] big_m, np.ndarray[double] big_p, np.ndarray[double] r):
-    cdef np.ndarray[double] dalpha = ((sp.constants.G * big_m / sp.constants.c ** 2 + 4 * sp.constants.pi * sp.constants.G * r**3
-                                       * big_p / sp.constants.c**4) / (r**2 - 2 * sp.constants.G * big_m * r / sp.constants.c**2))
+    cdef np.ndarray[double] dalpha = r
+    dalpha[0] = 1
+
+    dalpha = ((sp.constants.G * big_m / sp.constants.c ** 2 + 4 * sp.constants.pi * sp.constants.G * dalpha**3
+                  * big_p / sp.constants.c**4) / (dalpha**2 - 2 * sp.constants.G * big_m * dalpha / sp.constants.c**2))
     dalpha[0] = 0
     cdef np.ndarray[double] alpha_temp = cumulative_trapz(dalpha, r)
     cdef double offset = (1 / 2 * np.log(1 - 2 * sp.constants.G * big_m[-1] / r[-1] / sp.constants.c ** 2)) - alpha_temp[-1]

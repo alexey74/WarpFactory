@@ -24,7 +24,7 @@ from Metrics import Metric, set_minkowski_three_plus_one, warp_factor_by_region,
 
 def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, scale: np.float64 = None,
                   grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
-    assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Schwarzschild solution'
+    assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used for the Lentz.'
 
     # Handle default input argument
     if scale is None:
@@ -53,8 +53,8 @@ def lentz_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.float6
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
 
-                x = i * grid_scaling[1] - world_center[1]
-                y = j * grid_scaling[2] - world_center[2]
+                x = (1 + i) * grid_scaling[1] - world_center[1]
+                y = (1 + j) * grid_scaling[2] - world_center[2]
 
                 # Get Lentz template values
                 wfx, wfy = warp_factor_by_region(x, y, scale)

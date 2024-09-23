@@ -34,58 +34,58 @@ import time
 from datetime import datetime
 
 import scipy as sp
-import scipy.constants
 import numpy as np
 
 from Metrics import Metric, tov_const_density, compact_sigmoid, sph2cart_diag, find_min_idx
 
-from Metrics.utils.alphanumeric_solver import alphanumeric_solver
+from Metrics.utils.alphanumeric_solver import alphanumeric_solver, cumulative_trapz
 from Solver import legendre_radial_interp
 
 
-def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.float64, R1: np.float64,
-                                      R2: np.float64, r_buff: np.float64 = 0.0, sigma: np.float64 = 0.0,
+def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.float64, big_r_1: np.float64,
+                                      big_r_2: np.float64, r_buff: np.float64 = 0.0, sigma: np.float64 = 0.0,
                                       smooth_factor: np.float64 = 1.0, v_warp: np.float64 = 0.0, do_warp: bool = False,
                                       grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
 
     metric_val: Metric = Metric("Comoving Warp Shell")
-    metric_val.type = "metric_val"
+    metric_val.type = "metric"
     metric_val.scaling = grid_scaling
     metric_val.coords = "cartesian"
     metric_val.index = "covariant"
     metric_val.date = datetime.today().strftime('%d-%m-%Y')
 
     # declare radius array
-    world_size = np.sqrt((grid_size[1] * grid_scaling[1] - world_center[1]) ** 2 +
+    world_size: np.float64 = np.sqrt((grid_size[1] * grid_scaling[1] - world_center[1]) ** 2 +
                          (grid_size[2] * grid_scaling[2] - world_center[2]) ** 2 +
                          (grid_size[3] * grid_scaling[3] - world_center[3]) ** 2)
     r_sample: np.ndarray[np.float64, ...] = np.linspace(0.0, world_size * 1.2, 10 ** 5, dtype=np.float64)
 
     # construct rho profile
-    rho: np.ndarray = np.array([1 if (R1 < i < R2) else 0 for i in r_sample]) * m / (4 / 3 * np.pi * (R2 ** 3 - R1 ** 3))
+    rho: np.ndarray[np.float64] = (np.array([1 if (big_r_1 < i < big_r_2) else 0 for i in r_sample]) *
+                                   m / (4 / 3 * np.pi * (big_r_2 ** 3 - big_r_1 ** 3)))
     metric_val.params_rho = rho
 
     # construct mass profile
-    big_m: np.ndarray = sp.integrate.cumulative_trapezoid(4 * np.pi * rho * r_sample ** 2, r_sample, initial=0)
+    big_m: np.ndarray[np.float64] = cumulative_trapz(4 * np.pi * rho * r_sample ** 2, r_sample, initial=0)
 
     # construct pressure profile
-    big_p: np.ndarray = tov_const_density(R2, big_m, rho, r_sample)
+    big_p: np.ndarray[np.float64] = tov_const_density(big_r_2, big_m, rho, r_sample)
     metric_val.params_big_p = big_p
 
     # smooth functions
     wsz: int = np.int32(np.floor(1.79 * smooth_factor) - 1 if np.floor(1.79 * smooth_factor) % 2 == 0
                              else np.floor(1.79 * smooth_factor))
-    rho: np.ndarray = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(
+    rho: np.ndarray[np.float64] = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(
         sp.ndimage.uniform_filter1d(rho, wsz), wsz), wsz), wsz).conjugate()
     metric_val.params_rho_smooth = rho
 
-    wsz = int(np.floor(smooth_factor) - 1 if np.floor(smooth_factor) % 2 == 0 else np.floor(smooth_factor))
-    big_p = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(
+    wsz: int = int(np.floor(smooth_factor) - 1 if np.floor(smooth_factor) % 2 == 0 else np.floor(smooth_factor))
+    big_p: np.ndarray[np.float64] = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(
         sp.ndimage.uniform_filter1d(big_p, wsz), wsz), wsz), wsz).conjugate()
     metric_val.params_p_smooth = big_p
 
     # reconstruct mass profile
-    big_m: np.ndarray = np.array(sp.integrate.cumulative_trapezoid(4 * np.pi * rho * r_sample ** 2, r_sample, initial=0))
+    big_m: np.ndarray[np.float64] = np.array(cumulative_trapz(4 * np.pi * rho * r_sample ** 2, r_sample, initial=0))
     big_m[big_m < 0] = np.max(big_m)
 
     # save variables
@@ -93,20 +93,21 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
     metric_val.params_r_vec = r_sample
 
     # set shift line vector
-    shift_radial_vector = compact_sigmoid(r_sample, R1, R2, sigma, r_buff)
+    shift_radial_vector = np.array(compact_sigmoid(r_sample.astype(np.longdouble), big_r_1, big_r_2, sigma, r_buff),
+                                   dtype=np.float64)
     shift_radial_vector = sp.ndimage.uniform_filter1d(sp.ndimage.uniform_filter1d(shift_radial_vector, wsz), wsz)
     shift_radial_vector = np.array([np.abs(i) for i in shift_radial_vector])
 
     # construct metric_val using spherical symmetric_val solution:
     # solve for B
-    big_b = (1 - 2 * sp.constants.G * big_m / r_sample / scipy.constants.c**2)**(-1)
-    big_b[0] = 1
+    big_b: np.ndarray[np.float64] = (1 - 2 * sp.constants.G * big_m[1:] / r_sample[1:] / sp.constants.c**2)**(-1)
+    big_b = np.insert(big_b, 0, np.float64(0))
 
     # solve for a
     a: np.ndarray[np.float64] = alphanumeric_solver(big_m, big_p, r_sample)
 
     # solve for A from a
-    big_a = -np.exp(2 * a)
+    big_a: np.float64 = -np.exp(2 * a)
 
     # save variables to the metric_val.params:
     metric_val.params_big_a = big_a
@@ -115,33 +116,31 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
     # return metric_val boosted and in cartesian space
     metric_val.tensor = np.zeros((4, 4) + tuple(grid_size))
 
-    shift_matrix = np.zeros(tuple(grid_size))
+    shift_matrix: np.ndarray[np.float64] = np.zeros(tuple(grid_size))
 
     # set offset value to handle r = 0
-    epsilon = np.float64(0.0)
-
-    st = time.process_time_ns()
+    epsilon: np.float64 = np.float64(0.0)
 
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
-                x = (i * grid_scaling[1] - world_center[1])
-                y = (j * grid_scaling[2] - world_center[2])
-                z = (k * grid_scaling[3] - world_center[3])
+                x: np.float64 = (1 + i) * grid_scaling[1] - world_center[1]
+                y: np.float64 = (1 + j) * grid_scaling[2] - world_center[2]
+                z: np.float64 = (1 + k) * grid_scaling[3] - world_center[3]
 
                 # ref Catalog of Spacetimes, Eq.(1.6.2) for coords def.
-                r = np.sqrt(x**2 + y**2 + z**2) + epsilon
-                theta = np.arctan2(np.sqrt(x**2 + y**2), z)
-                phi = np.arctan2(y, x)
+                r: np.float64 = np.sqrt(x**2 + y**2 + z**2) + epsilon
+                theta: np.float64 = np.arctan2(np.sqrt(x**2 + y**2), z)
+                phi: np.float64 = np.arctan2(y, x)
 
-                min_idx = find_min_idx(r_sample, r)
+                min_idx: int = find_min_idx(r_sample, r)
                 if r_sample[min_idx] > r:
                     min_idx = min_idx - 1
 
                 min_idx = min_idx + (r - r_sample[min_idx]) / (r_sample[min_idx + 1] - r_sample[min_idx])
 
-                g11_sph = legendre_radial_interp(big_a, min_idx)
-                g22_sph = legendre_radial_interp(big_b, min_idx)
+                g11_sph: np.float64 = legendre_radial_interp(big_a, min_idx)
+                g22_sph: np.float64 = legendre_radial_interp(big_b, min_idx)
 
                 g22_cart, g23_cart, g24_cart, g33_cart, g34_cart, g44_cart = sph2cart_diag(theta, phi, g22_sph)
 
@@ -163,10 +162,6 @@ def warpshell_comoving(grid_size: np.ndarray, world_center: np.ndarray, m: np.fl
                 metric_val.tensor[(3, 3, 0, i, j, k)] = g44_cart
 
                 shift_matrix[0, i, j, k] = legendre_radial_interp(shift_radial_vector, min_idx)
-
-    et = time.process_time_ns()
-
-    print('Cython', (et - st) / 10 ** 9)
 
     # Add warp effect
     if do_warp:

@@ -12,12 +12,12 @@ THREEPLUSONEBUILDER: Builds the metric given input 3+1 components of alpha, beta
 """
 import numpy as np
 
-from Solver.utils.c3_inv import c3_inv
+from Solver import tensor_inverse
 
 
 def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarray) -> np.ndarray:
     # Set spatial components
-    gamma_up = c3_inv(gamma)
+    gamma_up = tensor_inverse(gamma)
 
     # Find gridSize
     s = gamma.shape[2:]
@@ -27,19 +27,19 @@ def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarra
 
     for i in range(3):
         for j in range(3):
-            beta_up[i] = beta_up[i] + gamma_up[i, j] * beta[j]
+            beta_up[i] += gamma_up[i, j] * beta[j]
 
     # Create time-time component
     tensor: np.ndarray = np.zeros((4, 4) + s)
     tensor[0, 0] = -alpha**2
 
     for i in range(3):
-        tensor[0, 0] = tensor[0, 0] + beta_up[i] * beta[i]
+        tensor[0, 0] += beta_up[i] * beta[i]
 
     # Create time-space components
     for i in range(1, 4):
         tensor[0, i] = beta[i-1]
-        tensor[i, 0] = tensor[1, i]
+        tensor[i, 0] = tensor[0, i]
 
     # Create space-space components
     for i in range(1, 4):

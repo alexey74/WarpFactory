@@ -29,7 +29,7 @@ from Metrics import Metric, set_minkowski, shape_func_alcubierre
 # Handle default input arguments
 def modified_time_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: np.double, big_r: np.double, sigma: np.double,
                              big_a: np.double, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
-    assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used in comoving'
+    assert grid_size[0] == 1, 'The time grid is greater than 1, only a size of 1 can be used in comoving.'
 
     # Assign parameters to metric struct
     metric_val = Metric("Modified Time Comoving")
@@ -55,19 +55,22 @@ def modified_time_comoving(grid_size: np.ndarray, world_center: np.ndarray, v: n
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
-                x = i * grid_scaling[0] - world_center[0]
-                y = j * grid_scaling[1] - world_center[1]
-                z = k * grid_scaling[2] - world_center[2]
+                x: np.float64 = (1 + i) * grid_scaling[0] - world_center[0]
+                y: np.float64 = (1 + j) * grid_scaling[1] - world_center[1]
+                z: np.float64 = (1 + k) * grid_scaling[2] - world_center[2]
 
                 # Find the radius from the center of the bubble
-                r = np.sqrt((x**2 + y**2 + z**2))
+                r: np.float64 = np.sqrt((x**2 + y**2 + z**2))
 
                 # Find shape function at this point in r
-                fs: np.double = shape_func_alcubierre(r, big_r, sigma)
+                fs: np.float64 = shape_func_alcubierre(r, big_r, sigma)
 
                 # Add alcubierre term to dxdt
-                metric_val.tensor[(0, 1) + (t, i, j, k)] = v * (1 - fs)
-                metric_val.tensor[(1, 0) + (t, i, j, k)] = metric_val.tensor[(0, 1) + (t, i, j, k)]
+                cross_term: np.float64 = v * (1.0 - fs)
+                metric_val.tensor[(0, 1) + (t, i, j, k)] = cross_term
+
+                # TODO: figure out why it was originally supposed to be ... = metric_val.tensor[(0, 1) + (t, i, k, k)]
+                metric_val.tensor[(1, 0) + (t, i, j, k)] = cross_term
 
                 # Add dt term modification
                 metric_val.tensor[(0, 0) + (t, i, j, k)] = -((1 - fs) + fs/big_a)**2 + (fs * v)**2

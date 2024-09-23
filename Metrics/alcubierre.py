@@ -28,8 +28,8 @@ from Metrics.utils.three_plus_one_builder import three_plus_one_builder
 from Metrics.utils.shape_func_alcubierre import shape_func_alcubierre
 
 
-def alcubierre(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64 = None,
-                     sigma: np.float64 = None, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
+def alcubierre(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, big_r: np.float64,
+                     sigma: np.float64, grid_scaling: np.ndarray = np.array([1, 1, 1, 1])):
     # Assign parameters to metric struct
     metric_val = Metric("Alcubierre")
     metric_val.params_grid_size = grid_size
@@ -54,13 +54,13 @@ def alcubierre(grid_size: np.ndarray, world_center: np.ndarray, v: np.float64, b
             for k in range(grid_size[3]):
 
                 # Find grid center x, y, z
-                x: np.float64 = i * grid_scaling[1] - world_center[1]
-                y: np.float64 = j * grid_scaling[2] - world_center[2]
-                z: np.float64 = k * grid_scaling[3] - world_center[3]
+                x: np.float64 = (1 + i) * grid_scaling[1] - world_center[1]
+                y: np.float64 = (1 + j) * grid_scaling[2] - world_center[2]
+                z: np.float64 = (1 + k) * grid_scaling[3] - world_center[3]
 
                 for t in range(grid_size[0]):
                     # Determine the x offset of the center of the bubble, centered in time
-                    xs: np.float64 = (t * grid_scaling[0] - world_center[0]) * v * sp.constants.c
+                    xs: np.float64 = ((1 + t) * grid_scaling[0] - world_center[0]) * v * sp.constants.c
 
                     # Find the radius from the center of the bubble
                     r: np.float64 = np.sqrt((x - xs)**2 + y**2 + z**2)

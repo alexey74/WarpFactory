@@ -13,7 +13,7 @@ tensor - The metric tensor as a 4x4 cell of 4D arrays.
 import numpy as np
 
 
-def set_minkowski(grid_size: np.ndarray) -> np.ndarray:
+def set_minkowski(grid_size: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
     t_grid_size: tuple = tuple(grid_size)
 
     metric: np.ndarray = np.zeros((4, 4) + t_grid_size)

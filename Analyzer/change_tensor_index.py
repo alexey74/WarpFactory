@@ -101,3 +101,5 @@ def change_tensor_index(input_tensor: Metric, index, metric_tensor: Metric = Non
                 output_tensor.tensor = mix_index1(input_tensor, metric_tensor)
 
     output_tensor.index = index
+
+    return output_tensor

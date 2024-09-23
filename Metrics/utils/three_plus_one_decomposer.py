@@ -14,7 +14,7 @@ THREEPLUSONEDECOMPOSER: Finds 3+1 terms from the metric tensor
 import numpy as np
 
 from Analyzer.change_tensor_index import change_tensor_index
-from Solver.utils.c3_inv import c3_inv
+from Solver import tensor_inverse
 
 
 def three_plus_one_decomposer(metric_val) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -30,7 +30,7 @@ def three_plus_one_decomposer(metric_val) -> tuple[np.ndarray, np.ndarray, np.nd
                                        [metric_val.tensor[3, 1], metric_val.tensor[3, 2], metric_val.tensor[3, 3]]])
 
     # Set spatial components
-    gamma_up: np.ndarray = c3_inv(gamma_down)
+    gamma_up: np.ndarray = tensor_inverse(gamma_down)
 
     # Transform beta to contravariant
     beta_up: np.ndarray = np.zeros((1, 3) + metric_val.tensor[0, 0].shape)

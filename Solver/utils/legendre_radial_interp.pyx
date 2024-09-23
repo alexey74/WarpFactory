@@ -1,17 +1,19 @@
 cimport cython
 
 
-cdef extern from "math.h":
+cdef extern from "math.h" nogil:
     int floor(double x)
     int ceil(double x)
 
-cdef int imax(int x, int y):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef int imax(int x, int y) nogil:
     return x if x > y else y
 
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double legendre_radial_interp(double[::1] input_array, double r, int r_scale = 1):
+cpdef double legendre_radial_interp(double[::1] input_array, double r, int r_scale = 1) nogil:
     # 3rd Order Legendre Polynomial Interpolation
     cdef int x0 = floor((r / r_scale) - 1)
     cdef int x1 = floor(r / r_scale)

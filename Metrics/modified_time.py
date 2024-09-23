@@ -19,6 +19,7 @@ METRICGET_MODIFIEDTIME: Builds the Modified Time metric
     OUTPUTS:
     metric - metric struct object.
 """
+import time
 from datetime import datetime
 
 import numpy as np
@@ -41,7 +42,10 @@ def modified_time(grid_size: np.ndarray, world_center: np.ndarray, v: np.double,
 
     # Assign quantities to metric struct
     metric_val.type = "metric"
+
+    # TODO: Also figure out why this is here
     metric_val.frame = "comoving"
+
     metric_val.scaling = grid_scaling
     metric_val.coords = "cartesian"
     metric_val.index = "covariant"
@@ -54,24 +58,27 @@ def modified_time(grid_size: np.ndarray, world_center: np.ndarray, v: np.double,
     for i in range(grid_size[1]):
         for j in range(grid_size[2]):
             for k in range(grid_size[3]):
-                x = i * grid_scaling[0] - world_center[0]
-                y = j * grid_scaling[1] - world_center[1]
-                z = k * grid_scaling[2] - world_center[2]
+                x: np.float64 = (1 + i) * grid_scaling[0] - world_center[0]
+                y: np.float64 = (1 + j) * grid_scaling[1] - world_center[1]
+                z: np.float64 = (1 + k) * grid_scaling[2] - world_center[2]
 
                 for t in range(grid_size[0]):
                     # Determine the x offset of the center of the bubble, centered in time
-                    # Originally it said grid_scale, and I'm really unsure if I missed a reference, so yeah...
-                    xs: np.ndarray = (t * grid_scaling[0] - world_center[0]) * v * sp.constants.c
+                    # TODO: figure out why it was GridScale originally
+                    xs: np.float64 = ((1 + t) * grid_scaling[0] - world_center[0]) * v * sp.constants.c
 
                     # Find the radius from the center of the bubble
-                    r = np.sqrt(((x - xs)**2 + y**2 + z**2))
+                    r: np.float64 = np.sqrt((x - xs)**2 + y**2 + z**2)
 
                     # Find shape function at this point in r
-                    fs: np.double = shape_func_alcubierre(r, big_r, sigma)
+                    fs: np.float64 = shape_func_alcubierre(r, big_r, sigma)
 
                     # Add alcubierre term to dxdt
-                    metric_val.tensor[(0, 1) + (t, i, j, k)] = -v * fs
-                    metric_val.tensor[(1, 0) + (t, i, j, k)] = metric_val.tensor[(0, 1) + (t, i, j, k)]
+                    cross_term: np.float64 = -v * fs
+                    metric_val.tensor[(0, 1) + (t, i, j, k)] = cross_term
+
+                    # TODO: figure out why it was originally supposed to be ... = metric_val.tensor[(0, 1) + (t, i, k, k)]
+                    metric_val.tensor[(1, 0) + (t, i, j, k)] = cross_term
 
                     # Add dt term modification
                     metric_val.tensor[(0, 0) + (t, i, j, k)] = -((1 - fs) + fs/big_a)**2 + (fs * v)**2

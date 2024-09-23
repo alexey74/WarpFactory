@@ -1,10 +1,10 @@
 import numpy as np
 
 
-def warp_factor_by_region(x: np.float64, y_in: np.float64, size_scale) -> tuple[float, float]:
+def warp_factor_by_region(x: np.float64, y_in: np.float64, size_scale: np.float64) -> tuple[float, float]:
     y = np.abs(y_in)
-    wfx: float = 0
-    wfy: float = 0
+    wfx: float = 0.0
+    wfy: float = 0.0
 
     if (size_scale <= x <= 2 * size_scale) and (x - size_scale >= y):
         wfx = -2.0
@@ -19,6 +19,9 @@ def warp_factor_by_region(x: np.float64, y_in: np.float64, size_scale) -> tuple[
         wfx = -0.5
         wfy = 0.5
     elif (-size_scale < x <= 0) and (-x + size_scale < y) and (-x <= -y + 3 * size_scale):
+        wfx = 0.5
+        wfy = 0.5
+    elif (-size_scale < x <= 0) and (x + size_scale <= y) and (x <= -y + size_scale):
         wfx = 1.0
         wfy = 0.0
     elif (-size_scale <= x <= size_scale) and (y < x + size_scale):

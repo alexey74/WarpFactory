@@ -28,15 +28,17 @@ def minkowski(grid_size: np.ndarray, grid_scaling: np.ndarray = np.array([1, 1, 
     metric_val.date = datetime.today().isoformat()
 
     # Initialization and Cross terms
-    metric: np.ndarray = np.zeros((4, 4) + t_grid_size)
+    tensor: np.ndarray = np.zeros((4, 4) + t_grid_size)
 
     # dt^2 term
-    metric[0, 0] = np.full(t_grid_size, -1)
+    tensor[0, 0] = np.full(t_grid_size, -1)
 
     # Non-time diagonal terms
     for i in range(1, 4):
         for j in range(1, 4):
             if i == j:
-                metric[i, j] = np.ones(t_grid_size)
+                tensor[i, j] = np.ones(t_grid_size)
 
-    return metric
+    metric_val.tensor = tensor
+
+    return metric_val
