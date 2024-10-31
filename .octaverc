@@ -1,0 +1,15 @@
+%% -*- mode: octave; indent-tabs-mode: nil; tab-width: 4 -*-
+
+pkg load ocl;
+#ocl_context ("assure");
+#ocl_context ("get_resources").devices{1}{1}.name
+addpath(genpath('.', '.git'));
+tic();
+atexit("toc");
+
+warning('off', 'Octave:shadowed-function');
+#graphics_toolkit('notebook')
+setenv("GNUTERM", "qt");
+graphics_toolkit("gnuplot");
+
+diary warpfactory.log

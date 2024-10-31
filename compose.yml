@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    command: jupyter server --ip=0.0.0.0 --ServerApp.root=/app --ServerApp.token=''
+      --ServerApp.allow_root=True 
+    working_dir: /app
+    volumes:
+    - ./:/app
+    - ${PWD}:${PWD}  # for debugger
+    - ./.jupyter/:/root/.jupyter/
+    devices:
+    - /dev/dri:/dev/dri
+    environment:
+      JUPYTER_SERVER_ALLOW_UNAUTHENTICATED_ACCESS: "true"
+      OCTAVE_EXECUTABLE: octave-cli-jupyter
+      KERNEL_WORKING_DIR: /app
+      QT_QPA_PLATFORM: offscreen
+    ports:
+    - 8888:8888
+

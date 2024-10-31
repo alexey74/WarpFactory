@@ -3,10 +3,10 @@ function [Vector] = getEvenPointsOnSphere(R,numberOfPoints,useGPU)
 %   Detailed explanation goes here
 
 if useGPU
-    goldenRatio = gpuArray((1+5^0.5)/2);
-    numberOfPoints = gpuArray(numberOfPoints);
+    goldenRatio = (1+5^0.5)/2;
+    Vector = gpuArrayZeros(3,numberOfPoints);
+    # numberOfPoints = gpuArray(numberOfPoints);
     R = gpuArray(R);
-    Vector = zeros(3,numberOfPoints,'gpuArray');
 else
     goldenRatio = (1+5^0.5)/2;
     Vector = zeros(3,numberOfPoints);
@@ -22,5 +22,11 @@ for i = 0:numberOfPoints-1
 end
 
 Vector = real(Vector);
+# FIXME: OclArray: octave indexing must result in a contiguous memory range
+if useGPU
+    Vector = gather(Vector);
+endif
+
 end
+
 

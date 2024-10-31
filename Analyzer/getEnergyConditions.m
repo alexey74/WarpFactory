@@ -117,7 +117,7 @@ if strcmpi(condition, "Null")
         end
         for mu = 1:4
             for nu = 1:4
-                temp = temp+energyTensor.tensor{mu, nu} * vecField(mu, ii) * vecField(nu, ii);
+                temp = temp+energyTensor.tensor{mu, nu} .* vecField(mu, ii) .* vecField(nu, ii);
             end
         end
         map = min(map, temp);
@@ -139,7 +139,7 @@ elseif strcmpi(condition, "Weak")
 
             for mu = 1:4
                 for nu = 1:4
-                    temp = temp+energyTensor.tensor{mu, nu} * vecField(mu, ii, jj) * vecField(nu, ii, jj);
+                    temp = temp+energyTensor.tensor{mu, nu} .* vecField(mu, ii, jj) .* vecField(nu, ii, jj);
                 end
             end
             map = min(map, temp);
@@ -165,7 +165,7 @@ elseif strcmpi(condition, "Dominant")
         end
         for mu = 1:4
             for nu = 1:4
-                temp(:, :, :, :, mu) = temp(:, :, :, :, mu)-energyTensor.tensor{mu, nu} * vecField(nu, ii);
+                temp(:, :, :, :, mu) = temp(:, :, :, :, mu)-energyTensor.tensor{mu, nu} .* vecField(nu, ii);
             end
         end
 

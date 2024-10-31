@@ -1,12 +1,11 @@
 function [Metric] = metricGet_WarpShellComoving(gridSize,worldCenter,m,R1,R2,Rbuff,sigma,smoothFactor,vWarp,doWarp,gridScaling)
 
-
 %% METRICGET_WARPSHELLCOMOVING: Builds the Warp Shell metric in a comoving frame
 % https://iopscience.iop.org/article/10.1088/1361-6382/ad26aa
 %
-%   INPUTS: 
+%   INPUTS:
 %   gridSize - 1x4 array. world size in [t, x, y, z], double type.
-%   
+%
 %   worldCenter - 1x4 array. world center location in [t, x, y, z], double type.
 %
 %   m - total mass of the warp shell
@@ -21,16 +20,16 @@ function [Metric] = metricGet_WarpShellComoving(gridSize,worldCenter,m,R1,R2,Rbu
 %   sigma - sharpness parameter of the shift sigmoid
 %
 %   smoothfactor - factor by which to smooth the walls of the shell
-% 
+%
 %   vWarp - speed of the warp drive in factors of c, along the x direction, double type.
-% 
+%
 %   doWarp - 0 or 1, whether or not to create the warp effect inside the
 %   shell
-% 
+%
 %   gridScale - scaling of the grid in [t, x, y, z]. double type.
 %
-%   OUTPUTS: 
-%   metric - metric struct object. 
+%   OUTPUTS:
+%   metric - metric struct object.
 
 %%
 
@@ -63,7 +62,9 @@ Metric.date = date;
 
 % declare radius array
 worldSize = sqrt((gridSize(2)*gridScaling(2)-worldCenter(2))^2+(gridSize(3)*gridScaling(3)-worldCenter(3))^2+(gridSize(4)*gridScaling(4)-worldCenter(4))^2);
-rSampleRes = 10^5;
+
+rSampleRes = 10^3; # 10^5 # OOM!
+
 rsample = linspace(0,worldSize*1.2,rSampleRes);
 
 % construct rho profile
@@ -90,8 +91,9 @@ P = P';
 Metric.params.Psmooth = P;
 
 % reconstruct mass profile
-M = cumtrapz(rsample, 4*pi.*rho.*rsample.^2);
-M(M<0) = max(M);
+YY=4*pi.*rho.*rsample.^2;
+M = cumtrapz(rsample, YY);
+M(M<0) = max(max(M));
 
 
 % save varaibles
@@ -103,7 +105,7 @@ Metric.params.rVec = rsample;
 shiftRadialVector = compactSigmoid(rsample,R1,R2,sigma,Rbuff);
 shiftRadialVector = smooth(smooth(shiftRadialVector,smoothFactor),smoothFactor);
 
-% construct metric using spherical symmetric solution: 
+% construct metric using spherical symmetric solution:
 % solve for B
 B = (1-2*G.*M./rsample/c^2).^(-1);
 B(1) = 1;
@@ -130,7 +132,9 @@ ShiftMatrix = zeros(gridSize);
 % set offset value to handle r = 0
 epsilon = 0;
 
+# wbh = waitbar(0, 'fill metric')
 for i = 1:gridSize(2)
+    # waitbar(i / gridSize(2), wbh)
     for j = 1:gridSize(3)
         for k = 1:gridSize(4)
 
@@ -170,10 +174,10 @@ for i = 1:gridSize(2)
             Metric.tensor{3,4}(1,i,j,k) = g34_cart;
             Metric.tensor{4,3}(1,i,j,k) = Metric.tensor{3,4}(1,i,j,k);
 
-            Metric.tensor{4,4}(1,i,j,k) = g44_cart; 
+            Metric.tensor{4,4}(1,i,j,k) = g44_cart;
 
             ShiftMatrix(1,i,j,k) = legendreRadialInterp(shiftRadialVector,minIdx);
-            
+
         end
     end
 end

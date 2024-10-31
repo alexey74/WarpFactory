@@ -16,15 +16,15 @@ verified = 1;
 if isfield(inputTensor,'type')
     % Check tensor type
     if strcmpi(inputTensor.type, "Metric")
-    
+
         % Metric tensor
         dispMessage("type: Metric",suppressMsgs);
-        
+
     elseif strcmpi(inputTensor.type, "Stress-Energy")
-    
+
         % Stress-Energy Tensor
         dispMessage("Type: Stress-Energy",suppressMsgs);
-    
+
     elseif ~isfield(inputTensor,'type')
         warning('Tensor type field does not exits. Must be either "Metric" or "Stress-Energy"')
         verified = 0;
@@ -43,7 +43,7 @@ if isfield(inputTensor,'type')
             warning("Tensor is not formatted correctly. Tensor must be a 4x4 cell array of 4D values.")
             verified = 0;
         end
-        
+
     else
         warning("tensor: Empty");
         verified = 0;
@@ -51,7 +51,7 @@ if isfield(inputTensor,'type')
     % Coords
     if isfield(inputTensor,'coords')
         if strcmpi(string(inputTensor.coords), "cartesian")
-            dispMessage("coords: " + string(inputTensor.coords),suppressMsgs);
+            dispMessage(strcat("coords: ",  string(inputTensor.coords)),suppressMsgs);
         else
             warning("Non-cartesian coordinates are not supported at this time. Set .coords to 'cartesian'.")
         end
@@ -65,7 +65,7 @@ if isfield(inputTensor,'type')
            strcmpi(string(inputTensor.index), "covariant") || ...
            strcmpi(string(inputTensor.index), "mixedupdown") || ...
            strcmpi(string(inputTensor.index), "mixeddownup")
-            dispMessage("index: " + string(inputTensor.index),suppressMsgs);
+            dispMessage(strcat("index: ", string(inputTensor.index)),suppressMsgs);
         else
             warning("Unknown index");
             verified = 0;
@@ -82,11 +82,6 @@ end
 % Reset user's backtrace setting
 warning(userBacktraceState,'backtrace')
 
-% Function for displaying messages
-function dispMessage(msg,sM)
-    if ~sM
-        fprintf(msg+"\n")
-    end
-end
+
 end
 

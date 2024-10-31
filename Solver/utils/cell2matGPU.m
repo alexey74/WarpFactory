@@ -67,7 +67,7 @@ end
 % If cell array is 2-D, execute 2-D code for speed efficiency
 if ndims(c) == 2
     rows = size(c,1);
-    cols = size(c,2);   
+    cols = size(c,2);
     if (rows < cols)
         m = cell(rows,1);
         % Concatenate one dim first
@@ -81,7 +81,7 @@ if ndims(c) == 2
         % Concatenate one dim first
         for n=1:cols
             m{n} = cat(1,c{:,n});
-        end    
+        end
         % Now concatenate the single column of cells into a matrix
         m = cat(2,m{:});
     end
@@ -114,8 +114,16 @@ for cdim=(length(csize)-1):-1:1
         if ctsl==2 && cts(2)==1
             mref = {mref{1}};
         end
-        % Perform the concatenation along the (CDIM+1) dimension
-        ct{mref{:}} = cat(cdim+1,c{mref{:},:});
+
+        %% FIXME : octave_base_value::resize (): wrong type argument 'ocl matrix'
+
+        if isgpuarray(c{1})
+            # dispMessage(" Perform the concatenation along the (CDIM+1) dimension / GPU")
+            ct{mref{:}} = gather(ocl_cat(cdim+1,c{mref{:},:}));
+        else
+            # dispMessage(" Perform the concatenation along the (CDIM+1) dimension")
+            ct{mref{:}} = cat(cdim+1,c{mref{:},:});
+        endif
     end
     % Replace M with the new temporarily concatenated cell array, CT
     c = ct;

@@ -5,10 +5,13 @@ if isgpuarray(A)
     delta = gpuArray(delta);
 
     s = gpuArray(size(A));
-    B = zeros(s,'gpuArray');
+    B = zeros(s);  %% avoid OCL contig. mem. err
 else
     s = size(A);
     B = zeros(s);
+    if isgpuarray(delta)
+        delta = gather(delta);
+    end
 end
 
 if s(k)>=5
@@ -47,6 +50,8 @@ if s(k)>=5
     end
 end
 
-
+if isgpuarray(A)
+    B = gpuArray(B); %% avoid OCL contig. mem. err
 end
 
+end

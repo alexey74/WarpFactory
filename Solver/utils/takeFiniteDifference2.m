@@ -6,13 +6,14 @@ function [B] = takeFiniteDifference2(A,k1,k2,delta,phiphiFlag)
 
 if isgpuarray(A)
     delta = gpuArray(delta);
-
     s = gpuArray(size(A));
-    B = zeros(s,'gpuArray');
-    
+    B = zeros(s);
 else
     s = size(A);
     B = zeros(s);
+    if isgpuarray(delta)
+        delta = gather(delta);
+    end
 end
 
 if s(k1)>=5 && s(k2)>=5
@@ -53,19 +54,19 @@ if s(k1)>=5 && s(k2)>=5
     else
         kL = max(k1,k2);
         kS = min(k1,k2);
-    
+
         x2 = 5:s(kS);
         x1 = 4:s(kS)-1;
         x0 = 3:s(kS)-2;
         x_1 = 2:s(kS)-3;
         x_2 = 1:s(kS)-4;
-        
+
         y2 = 5:s(kL);
         y1 = 4:s(kL)-1;
         y0 = 3:s(kL)-2;
         y_1 = 2:s(kL)-3;
         y_2 = 1:s(kL)-4;
-    
+
         switch kS
             case 1
                 switch kL
@@ -76,7 +77,7 @@ if s(k1)>=5 && s(k2)>=5
                           +8*(-(A(x2,y1,:,:)  -A(x_2,y1,:,:) ) +8*(A(x1,y1,:,:)  -A(x_1,y1,:,:) ))...
                           -8*(-(A(x2,y_1,:,:) -A(x_2,y_1,:,:)) +8*(A(x1,y_1,:,:) -A(x_1,y_1,:,:)))...
                           );
-    
+
                     case 3 %partial 0 / partial 2
                         B(x0,:,y0,:) = 1/(12^2*delta(kL)*delta(kS)) * ( ...
                             -(-(A(x2,:,y2,:)  -A(x_2,:,y2,:) ) +8*(A(x1,:,y2,:)  -A(x_1,:,y2,:) ))...
@@ -91,7 +92,7 @@ if s(k1)>=5 && s(k2)>=5
                           +8*(-(A(x2,:,:,y1)  -A(x_2,:,:,y1) ) +8*(A(x1,:,:,y1)  -A(x_1,:,:,y1) ))...
                           -8*(-(A(x2,:,:,y_1) -A(x_2,:,:,y_1)) +8*(A(x1,:,:,y_1) -A(x_1,:,:,y_1)))...
                           );
-    
+
                 end
             case 2
                 switch kL
@@ -102,7 +103,7 @@ if s(k1)>=5 && s(k2)>=5
                           +8*(-(A(:,x2,y1,:)  -A(:,x_2,y1,:) ) +8*(A(:,x1,y1,:)  -A(:,x_1,y1,:) ))...
                           -8*(-(A(:,x2,y_1,:) -A(:,x_2,y_1,:)) +8*(A(:,x1,y_1,:) -A(:,x_1,y_1,:)))...
                           );
-    
+
                     case 4 %partial 1 / partial 3
                          B(:,x0,:,y0) = 1/(12^2*delta(kL)*delta(kS)) * ( ...
                             -(-(A(:,x2,:,y2)  -A(:,x_2,:,y2) ) +8*(A(:,x1,:,y2)  -A(:,x_1,:,y2) ))...
@@ -125,7 +126,9 @@ if s(k1)>=5 && s(k2)>=5
     end
 end
 
-
+if isgpuarray(A)
+    B = gpuArray(B);
+end
 
 end
 

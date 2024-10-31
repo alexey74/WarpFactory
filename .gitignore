@@ -1,0 +1,6 @@
+octave-workspace
+.env
+*.log
+plots
+.ipynb_checkpoints
+.jupyter/

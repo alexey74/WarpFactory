@@ -4,8 +4,8 @@ if nargin < 2
     gradientNum = 1024;
 end
 
-minValue = min(value,[],'all');
-maxValue = max(value,[],'all');
+minValue = min(min(value));
+maxValue = max(max(value));
 
 if ~(minValue <=0 && maxValue >=0)
     if minValue > 0 && maxValue > 0

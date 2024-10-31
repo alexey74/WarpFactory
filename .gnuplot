@@ -1,0 +1,2 @@
+# -*- mode: gnuplot -*-
+unset warnings
