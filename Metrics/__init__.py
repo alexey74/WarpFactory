@@ -6,7 +6,7 @@ from Metrics.utils.find_min_idx import find_min_idx  # NOQA
 
 from Metrics.utils.compact_sigmoid import compact_sigmoid  # NOQA
 
-from Metrics.utils.cumulative_trapezoid_gpu import cumulative_trapezoid_gpu  # NOQA
+# from Metrics.utils.cumulative_trapezoid_gpu import cumulative_trapezoid_gpu  # NOQA
 
 from Metrics.utils.set_minkowski import set_minkowski  # NOQA
 

@@ -15,7 +15,7 @@ from datetime import datetime
 from logging import info, error
 
 import numpy as np
-import cupy as cx
+#import cupy as cx
 
 from Analyzer import change_tensor_index
 from Solver import verify_tensor
@@ -24,6 +24,7 @@ from Solver.utils.energy import Energy
 from Solver.utils.met2den import met2den
 
 
+# TODO: Add Cupy whenever available for 3.13
 # TODO: Test
 # TODO: GPU Implementation
 
@@ -32,7 +33,7 @@ def get_energy_tensor(metric_val: Metric, use_gpu: bool = False, diff_order: int
     energy_val: Energy = Energy(metric_val.name)
     energy_tensor: np.ndarray
 
-    if verify_tensor(Metric, True):
+    if not verify_tensor(metric_val):
         raise ValueError('Metric is not verified. Please verify metric using verifyTensor(metric).')
 
     if metric_val.index != 'covariant':
@@ -40,21 +41,10 @@ def get_energy_tensor(metric_val: Metric, use_gpu: bool = False, diff_order: int
         info('Changed metric from %s index to covariant index.', metric_val.index)
 
     if use_gpu:
-        cx.array(metric_val.tensor)
-
-        if diff_order == 4:
-            energy_tensor = met2den(metric_val.tensor, metric_val.scaling)
-        #elif diff_order == 4:
-            #energy_tensor = met2den2(metric_val.tensor, metric_val.scaling)  # TODO: Fix Import
-        else:
-            error('Order Flag Not Specified Correctly.')
+        np.array(metric_val.tensor)
+        energy_tensor = met2den(metric_val.tensor, metric_val.scaling, diff_order)
     else:
-        if diff_order == 4:
-            energy_tensor = met2den(metric_val.tensor, metric_val.scaling)
-        #elif diff_order == 4:
-            #energy_tensor = met2den2(metric_val.tensor, metric_val.scaling)  # TODO: Fix Import
-        else:
-            error('Order Flag Not Specified Correctly.')
+        energy_tensor = met2den(metric_val.tensor, metric_val.scaling, diff_order)
 
     energy_val.type = "Stress-Energy"
     energy_val.tensor = energy_tensor

@@ -30,7 +30,6 @@ https://iopscience.iop.org/article/10.1088/1361-6382/ad26aa
     OUTPUTS:
     metric - metric struct object.
 """
-import time
 from datetime import datetime
 
 import scipy as sp

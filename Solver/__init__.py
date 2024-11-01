@@ -6,9 +6,9 @@ from Solver.utils.energy import Energy  # NOQA
 
 # from Solver.get_energy_tensor import get_energy_tensor  # NOQA
 
-from Solver.verify_tensor import verify_tensor  # NOQA
-
 from Solver.utils.legendre_radial_interp import legendre_radial_interp  # NOQA
+
+from Solver.verify_tensor import verify_tensor  # NOQA
 
 from Solver.utils.take_finite_diff import take_finite_diff_1dir  # NOQA
 from Solver.utils.take_finite_diff import take_finite_diff_2dirs  # NOQA
