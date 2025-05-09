@@ -1,12 +1,13 @@
 import numpy as np
 from typing import Dict
 
+
 class EnergyTensor:
     """Calculate energy-momentum tensor components."""
-    
+
     def calculate_perfect_fluid(self, rho: np.ndarray, p: np.ndarray, x: np.ndarray) -> Dict[str, np.ndarray]:
         """Calculate perfect fluid stress-energy tensor.
-        
+
         Parameters
         ----------
         rho : np.ndarray
@@ -15,7 +16,7 @@ class EnergyTensor:
             Pressure
         x : np.ndarray
             Spatial coordinate
-            
+
         Returns
         -------
         Dict[str, np.ndarray]
@@ -31,5 +32,7 @@ class EnergyTensor:
             "T_zz": p,
             "T_tx": np.zeros_like(x),
             "T_ty": np.zeros_like(x),
-            "T_tz": np.zeros_like(x)
+            "T_tz": np.zeros_like(x),
         }
+
+    # calculate = calculate_perfect_fluid

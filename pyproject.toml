@@ -10,11 +10,23 @@ packages = [
 ]
 include = ["warpfactory/py.typed"]
 
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+[[tool.poetry.source]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+
+[[tool.poetry.source]]
+name = "torch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.3"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 numpy = "^1.26.4"
 scipy = "^1.12.0"
-torch = "^2.2.1"
+torch = { version = "^2.2.1", source = "torch-cpu" }
 matplotlib = "^3.8.3"
 PyQt6 = "^6.6.1"
 PyQt6-Qt6 = "^6.6.1"
@@ -27,6 +39,7 @@ isort = "^5.13.2"
 flake8 = "^7.0.0"
 mypy = "^1.8.0"
 pylint = "^3.0.3"
+prospector = "^1.16.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -74,9 +87,9 @@ module = [
 ]
 ignore_missing_imports = true
 
-[tool.poetry.scripts]
-lint = "poetry run pylint warpfactory"
-typecheck = "poetry run mypy warpfactory"
-format = "poetry run black . && poetry run isort ."
-check = "poetry run black --check . && poetry run isort --check-only . && poetry run flake8 . && poetry run mypy warpfactory && poetry run pylint warpfactory"
-test = "poetry run pytest --cov=warpfactory"
+# [tool.poetry.scripts]
+# lint = "poetry run pylint warpfactory"
+# typecheck = "poetry run mypy warpfactory"
+# format = "poetry run black . && poetry run isort ."
+# check = "poetry run black --check . && poetry run isort --check-only . && poetry run flake8 . && poetry run mypy warpfactory && poetry run pylint warpfactory"
+# test = "poetry run pytest --cov=warpfactory"

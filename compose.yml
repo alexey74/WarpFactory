@@ -1,0 +1,14 @@
+services:
+  warpfactory:
+    build: .
+    #command: python3 examples/metric.py
+    #command: python3 -m pytest
+    command: python3 -m warpfactory.gui
+
+    volumes:
+      - ./:/app
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+    environment:
+      - PYTHONPATH=/app
+      - DISPLAY
+      - QT_QPA_PLATFORM=xcb
