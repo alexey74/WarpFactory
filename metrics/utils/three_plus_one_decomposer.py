@@ -13,11 +13,11 @@ THREEPLUSONEDECOMPOSER: Finds 3+1 terms from the metric tensor
 """
 import numpy as np
 
-from analyzer import change_tensor_index
-from solver import tensor_inverse
-
 
 def three_plus_one_decomposer(metric_val) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    from analyzer import change_tensor_index
+    from solver import tensor_inverse
+    
     # Check that the metric is covariant and change index if not
     metric_val = change_tensor_index(metric_val, "covariant")
 

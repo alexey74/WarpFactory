@@ -12,10 +12,11 @@ THREEPLUSONEBUILDER: Builds the metric given input 3+1 components of alpha, beta
 """
 import numpy as np
 
-from solver import tensor_inverse
 
 
 def three_plus_one_builder(alpha: np.ndarray, beta: np.ndarray, gamma: np.ndarray) -> np.ndarray:
+    from solver import tensor_inverse
+
     # Set spatial components
     gamma_up = tensor_inverse(gamma)
 

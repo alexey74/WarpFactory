@@ -4,6 +4,7 @@ import numpy as np
 from cpython.tuple cimport PyTuple_SetItem, PyTuple_Size
 cimport cython
 cimport numpy as np
+np.import_array()
 
 from constants import c, G
 
